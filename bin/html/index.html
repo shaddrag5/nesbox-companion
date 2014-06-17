@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Nesbox Companion</title>
+
+	<link rel="stylesheet" href="bootstrap.min.css">
+
+</head>
+<body>
+
+	<div class="container">
+
+		<br>
+	
+		<p class="text-center"><img src="logo.png"></p>
+
+		<h1 class="text-center">Nesbox Companion</h1>
+		<h3 class="text-center text-muted">It helps you to use gamepad with Nesbox.com website</h3>
+
+		<hr>
+
+		<h3>Status: <span id="status-label"></span></h3>
+		<h3>Found gamepads: <span id="found-gamepads">0</span> <small>(if you don't see your gamepads here try to reconnect gamepad)</small></h3>
+
+		<ul class="nav nav-tabs" id="gamepad-tabs"></ul>
+
+		<div class="tab-content" id="gamepad-tabs-content"></div>
+
+		<div class="hide" id="tab-content-etalon">
+			<div class="tab-pane">
+				<br>
+				<div class="row">
+
+					<div class="col-sm-3">
+						<p><a class="btn btn-primary assign-button" id="up-button" href="#">UP <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-primary assign-button" id="down-button" href="#">DOWN <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-primary assign-button" id="left-button" href="#">LEFT <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-primary assign-button" id="right-button" href="#">RIGHT <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+					</div>
+
+					<div class="col-sm-3">
+						<p><a class="btn btn-warning assign-button" id="select-button" href="#">SELECT <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-warning assign-button" id="start-button" href="#">START <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-warning assign-button" id="l-button" href="#">L <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-warning assign-button" id="r-button" href="#">R <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+					</div>
+
+					<div class="col-sm-3">
+						<p><a class="btn btn-success assign-button" id="a-button" href="#">A <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-success assign-button" id="b-button" href="#">B <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-success assign-button" id="c-button" href="#">C <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+					</div>
+
+					<div class="col-sm-3">
+						<p><a class="btn btn-info assign-button" id="x-button" href="#">X <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-info assign-button" id="y-button" href="#">Y <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+						<p><a class="btn btn-info assign-button" id="z-button" href="#">Z <span class="glyphicon glyphicon-arrow-right"></span> <span class="button-value">...</span></a></p>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<h1 id="doesnt-support" class="hide text-center"><span class="label label-danger">Your system doesn't support gamepad input.</span></h1>
+
+	<div class="modal fade" id="button-assign-modal" tabindex="-1" role="dialog" aria-labelledby="button-assign-modal-label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h2 class="modal-title" id="button-assign-modal-label">Setup gamepad</h2>
+				</div>
+
+				<div class="modal-body">
+					<h3 class="text-center">Please, press a gamepad button...</h3>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" id="clear-button">Clear</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="jquery.min.js"></script>
+	<script src="bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+
+		$(function()
+		{
+			var buttonModal = $('#button-assign-modal');
+
+			buttonModal.on('hidden.bs.modal', function() 
+			{
+  				currentAssigningKey = null;
+			});
+
+			$('#clear-button').click(function()
+			{
+				window.clearButton();
+				$('#button-assign-modal').modal('hide');
+			});
+		});
+
+		function refreshAssignHandlers()
+		{
+			$('.assign-button').click(function()
+			{
+				var dataName = $(this).attr('id');
+
+				var buttonModal = $('#button-assign-modal');
+				buttonModal.modal();
+
+				currentAssigningKey = dataName;
+			});
+
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) 
+			{
+				var id = $(e.target).attr('id');
+				currentAssigningController = id.split('-')[2];
+			})
+		}
+
+		function setButtonValue(controllerIndex, type, value)
+		{
+			var tabContent = $('#gamepad-tab-content-'+controllerIndex);
+			tabContent.find('#'+type+'-button > .button-value').text(value || '...');
+		}
+
+		function onGamepadKey(name)
+		{
+			var type = currentAssigningKey.split('-')[0];
+
+			setButtonValue(currentAssigningController, type, name);
+
+			$('#button-assign-modal').modal('hide');
+		}
+
+		function setStatusLabel(value, style)
+		{
+			$('#status-label').html('<span class="label label-'+style+'">' + value + '</span>');
+		}
+
+		function setFoundGamepads(count)
+		{
+			$('#found-gamepads').text(count);
+		}
+
+		function hideGamepadTabs()
+		{
+			$('#gamepad-tabs').empty();
+			$('#gamepad-tabs-content').empty();
+		}
+
+		function addGamepadTab(index, name, buttons)
+		{
+			var gamepadTabs = $('#gamepad-tabs');
+			var tabId = 'gamepad-tab-' + index;
+			var contentId = 'gamepad-tab-content-' + index;
+			var li = $('<li><a href="#'+contentId+'" data-toggle="tab" id="'+tabId+'">Gamepad #'+(index+1)+': '+name+'</a></li>');
+
+			gamepadTabs.append(li);
+
+			var gamepadTabsContent = $('#gamepad-tabs-content');
+			var content = $($('#tab-content-etalon').html())
+				.attr('id', contentId);
+
+			gamepadTabsContent.append(content);
+
+			for(var buttonIndex in buttons)
+			{
+				var button = buttons[buttonIndex];
+				setButtonValue(index, button.type, button.value);
+			}
+
+			refreshAssignHandlers();
+
+			$('#gamepad-tab-0').tab('show');
+		}
+
+		function showDoesntSupport()
+		{
+			$('#doesnt-support').removeClass('hide');
+		}
+
+	</script>
+
+</body>
+</html>
