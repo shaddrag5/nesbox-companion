@@ -4,5 +4,6 @@
 <cross-domain-policy>  
 	<site-control permitted-cross-domain-policies="master-only" />
 	<allow-access-from domain="nesbox.com" to-ports="8087" />  
-    <allow-access-from domain="*.nesbox.com" to-ports="8087" />  
+    <allow-access-from domain="*.nesbox.com" to-ports="8087" /> 
+	<allow-access-from domain="nesbox.github.io" to-ports="8087" /> 
 </cross-domain-policy>
