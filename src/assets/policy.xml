@@ -1,9 +1,9 @@
 <?xml version="1.0"?> 
 <!DOCTYPE cross-domain-policy SYSTEM "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd"> 
-<!-- Policy file for xmlsocket://socks.mysite.com --> 
+<!-- Policy file for xmlsocket://socks.societydivinus.com --> 
 <cross-domain-policy>  
 	<site-control permitted-cross-domain-policies="master-only" />
-	<allow-access-from domain="nesbox.com" to-ports="8087" />  
-    <allow-access-from domain="*.nesbox.com" to-ports="8087" /> 
-	<allow-access-from domain="nesbox.github.io" to-ports="8087" /> 
+	<allow-access-from domain="societydivinus.com" to-ports="8087" />  
+    <allow-access-from domain="*.societydivinus.com" to-ports="8087" /> 
+	<allow-access-from domain="societydivinus.io" to-ports="8087" /> 
 </cross-domain-policy>
